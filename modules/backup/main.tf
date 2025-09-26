@@ -3,6 +3,7 @@ resource "azurerm_recovery_services_vault" "backupvault" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
+  tags                = var.tags
 }
 
 resource "azurerm_backup_policy_vm" "vmpolicy" {

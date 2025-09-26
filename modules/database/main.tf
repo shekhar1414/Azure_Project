@@ -5,6 +5,13 @@ resource "azurerm_mssql_server" "sql" {
   version                     = "12.0"
   administrator_login          = "sqladmin"
   administrator_login_password = "Password1234!"
+  tags                         = var.tags
+}
+
+resource "azurerm_mssql_virtual_network_rule" "sql_vnet_rule" {
+  name      = "${var.prefix}-sql-vnet-rule"
+  server_id = azurerm_mssql_server.sql.id
+  subnet_id = var.subnet_id
 }
 
 resource "azurerm_cosmosdb_account" "cosmos" {
@@ -13,6 +20,7 @@ resource "azurerm_cosmosdb_account" "cosmos" {
   resource_group_name = var.resource_group_name
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
+  tags                = var.tags
 
   consistency_policy {
     consistency_level = "Session"

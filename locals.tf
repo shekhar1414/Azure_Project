@@ -5,4 +5,10 @@ locals {
   nsg_name    = "${var.prefix}-NSG01"
   lb_name     = "${var.prefix}-LB01"
   pip_name    = "${var.prefix}-PIP01"
+
+  common_tags = {
+    "created by"    = "sk811f"
+    "iac"           = "terraform"
+    "creation_date" = "2025-09-26"
+  }
 }

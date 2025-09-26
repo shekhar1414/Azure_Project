@@ -3,6 +3,7 @@ resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}-NIC0${count.index + 1}"
   location            = var.location
   resource_group_name = var.resource_group_name
+  tags                = var.tags
 
   ip_configuration {
   name                          = "ipconfig1"
@@ -20,6 +21,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   disable_password_authentication = false
+  tags                = var.tags
 
   network_interface_ids = [
     element(azurerm_network_interface.nic.*.id, count.index)
@@ -49,9 +51,9 @@ output "vm_ids" {
 
 
 # Associate NICs with Load Balancer Backend Pool
-resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_assoc" {
+resource "azurerm_network_interface_nat_rule_association" "nic_nat_rule_assoc" {
   count                   = 3
   network_interface_id    = azurerm_network_interface.nic[count.index].id
   ip_configuration_name   = "ipconfig1"
-  backend_address_pool_id = var.lb_backend_id
+  nat_rule_id             = element(var.lb_nat_rule_ids, count.index)
 }
