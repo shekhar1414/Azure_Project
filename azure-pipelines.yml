@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-- group: 'terraform-variables' # Link to a variable group containing your secrets
+- group: 'ACC-23377-AZURE-NPRD-AICAP' # Link to a variable group containing your secrets
 
 steps:
 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
