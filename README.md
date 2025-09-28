@@ -14,7 +14,7 @@ The provisioned infrastructure consists of the following components:
 
 ### 1. Networking
 - **Virtual Network (VNet):** A dedicated VNet (`10.0.0.0/16`) provides an isolated network environment for all resources.
-- **Subnet:** A single subnet (`10.0.1.0/24`) hosts the compute resources and private endpoints.
+- **Subnet:** A single subnet (`10.0.1.0/24`) hosts the compute resources and private endpoints. Because all VMs and private endpoints reside in the same subnet, all VMs can communicate with all databases securely.
 - **Public IP & Load Balancer:** A standard Load Balancer with a static public IP address is used to distribute incoming traffic and provide public access to the application. NAT rules are configured for direct SSH access to the VMs on specific ports.
 - **Private Endpoints:** To enhance security, Private Endpoints are created for both the Azure SQL and Cosmos DB databases. This ensures that the databases are not exposed to the public internet and can only be accessed from within the virtual network.
 - **Private DNS Zones:** Private DNS zones (`privatelink.database.windows.net` and `privatelink.documents.azure.com`) are configured to resolve the database hostnames to their private IP addresses within the VNet.
@@ -70,7 +70,12 @@ graph TD
             LB --> VM3;
 
             VM1 --> SQL_PE;
+            VM2 --> SQL_PE;
+            VM3 --> SQL_PE;
+
+            VM1 --> COSMOS_PE;
             VM2 --> COSMOS_PE;
+            VM3 --> COSMOS_PE;
             
             SQL_PE --> SQL_DB;
             COSMOS_PE --> COSMOS_DB;
