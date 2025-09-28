@@ -15,8 +15,8 @@ module "networking" {
 module "security" {
   source              = "./modules/security"
   prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   tags                = local.common_tags
 }
@@ -24,8 +24,8 @@ module "security" {
 module "compute" {
   source              = "./modules/compute"
   prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   lb_backend_id       = module.networking.lb_backend_id
   admin_username      = var.admin_username
@@ -37,16 +37,16 @@ module "compute" {
 module "storage" {
   source              = "./modules/storage"
   prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   tags                = local.common_tags
 }
 
 module "database" {
   source              = "./modules/database"
   prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   tags                = local.common_tags
   subnet_id           = module.networking.subnet_id
 }
@@ -54,8 +54,8 @@ module "database" {
 module "backup" {
   source              = "./modules/backup"
   prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   vm_ids              = module.compute.vm_ids
   tags                = local.common_tags
 }
