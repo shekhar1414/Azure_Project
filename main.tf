@@ -1,15 +1,15 @@
-resource "azurerm_resource_group" "rg" {
-  name     = local.rg_name
-  location = var.location
-  tags     = local.common_tags
+data "azurerm_resource_group" "rg" {
+  name = local.rg_name
 }
 
 module "networking" {
-  source              = "./modules/networking"
-  prefix              = var.prefix
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = local.common_tags
+  source                = "./modules/networking"
+  prefix                = var.prefix
+  location              = data.azurerm_resource_group.rg.location
+  resource_group_name   = data.azurerm_resource_group.rg.name
+  tags                  = local.common_tags
+  sql_server_id         = module.database.sql_server_id
+  cosmosdb_account_id   = module.database.cosmosdb_account_id
 }
 
 module "security" {

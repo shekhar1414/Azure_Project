@@ -6,3 +6,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "sql_server_id" {
+  description = "The ID of the MS SQL server for the private endpoint."
+  type        = string
+  default     = null
+}
+
+variable "cosmosdb_account_id" {
+  description = "The ID of the Cosmos DB account for the private endpoint."
+  type        = string
+  default     = null
+}
