@@ -1,20 +1,22 @@
-data "azurerm_resource_group" "rg" {
-  name = local.rg_name
+resource "azurerm_resource_group" "rg" {
+  name     = local.rg_name
+  location = var.location
+  tags     = local.common_tags
 }
 
 module "networking" {
   source              = "./modules/networking"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
 }
 
 module "security" {
   source              = "./modules/security"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   tags                = local.common_tags
 }
@@ -22,8 +24,8 @@ module "security" {
 module "compute" {
   source              = "./modules/compute"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   lb_backend_id       = module.networking.lb_backend_id
   admin_username      = var.admin_username
@@ -35,16 +37,16 @@ module "compute" {
 module "storage" {
   source              = "./modules/storage"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
 }
 
 module "database" {
   source              = "./modules/database"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
   subnet_id           = module.networking.subnet_id
 }
@@ -52,8 +54,8 @@ module "database" {
 module "backup" {
   source              = "./modules/backup"
   prefix              = var.prefix
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   vm_ids              = module.compute.vm_ids
   tags                = local.common_tags
 }
@@ -61,21 +63,21 @@ module "backup" {
 # --- Private Endpoint for Azure SQL ---
 resource "azurerm_private_dns_zone" "sql" {
   name                = "privatelink.database.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "sql" {
   name                  = "${var.prefix}-sql-dns-link"
-  resource_group_name   = data.azurerm_resource_group.rg.name
+  resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.sql.name
-  virtual_network_id    = module.networking.vnet_id # Assuming vnet_id is an output from networking module
+  virtual_network_id    = module.networking.vnet_id
 }
 
 resource "azurerm_private_endpoint" "sql" {
   name                = "${var.prefix}-sql-pe"
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   tags                = local.common_tags
 
@@ -95,21 +97,21 @@ resource "azurerm_private_endpoint" "sql" {
 # --- Private Endpoint for Cosmos DB ---
 resource "azurerm_private_dns_zone" "cosmos" {
   name                = "privatelink.documents.azure.com"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "cosmos" {
   name                  = "${var.prefix}-cosmos-dns-link"
-  resource_group_name   = data.azurerm_resource_group.rg.name
+  resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.cosmos.name
-  virtual_network_id    = module.networking.vnet_id # Assuming vnet_id is an output from networking module
+  virtual_network_id    = module.networking.vnet_id
 }
 
 resource "azurerm_private_endpoint" "cosmos" {
   name                = "${var.prefix}-cosmos-pe"
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = module.networking.subnet_id
   tags                = local.common_tags
 
