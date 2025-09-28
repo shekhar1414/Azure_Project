@@ -13,7 +13,8 @@ variable "admin_username" {
 }
 
 variable "admin_password" {
-  default = "VmAdmin!1234" # Must meet Azure password policy
+  description = "The admin password for the virtual machine. Should be configured in a variable group."
+  sensitive   = true
 }
 
 variable "client_id" {}

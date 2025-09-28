@@ -23,11 +23,11 @@ provider "azurerm" {
 //     key                  = "terraform.tfstate"
 //   }
 // }
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "ACC-23377-Azure-NPRD-AICAP-RG01"
-    storage_account_name = "acc23377sa01"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
-}
+// terraform {
+//   backend "azurerm" {
+//     resource_group_name  = "ACC-23377-Azure-NPRD-AICAP-RG01"
+//     storage_account_name = "acc23377sa01"
+//     container_name       = "tfstate"
+//     key                  = "terraform.tfstate"
+//   }
+// }
