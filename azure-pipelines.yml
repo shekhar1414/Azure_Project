@@ -15,7 +15,7 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'init'
-    backendServiceArm: 'azure-terraform-connection' # Replace with your Azure Service Connection
+    backendServiceArm: 'ACC-23377-AZURE-NPRD-AICAP' # Replace with your Azure Service Connection
     backendAzureRmResourceGroupName: 'ACC-23377-Azure-NPRD-AICAP-RG01'
     backendAzureRmStorageAccountName: 'acc23377sa01'
     backendAzureRmContainerName: 'tfstate'
@@ -32,7 +32,7 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'plan'
-    environmentServiceNameAzureRM: 'azure-terraform-connection' # Replace with your Azure Service Connection
+    environmentServiceNameAzureRM: 'ACC-23377-AZURE-NPRD-AICAP' # Replace with your Azure Service Connection
     commandOptions: '-out=tfplan'
   env:
     TF_VAR_admin_password: $(admin_password)
@@ -42,7 +42,7 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'apply'
-    environmentServiceNameAzureRM: 'azure-terraform-connection' # Replace with your Azure Service Connection
+    environmentServiceNameAzureRM: 'ACC-23377-AZURE-NPRD-AICAP' # Replace with your Azure Service Connection
     commandOptions: '-auto-approve tfplan'
   env:
     TF_VAR_admin_password: $(admin_password)
