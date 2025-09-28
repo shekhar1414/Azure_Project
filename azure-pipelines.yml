@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Default
 
 variables:
 - group: 'ACC-23377-AZURE-NPRD-AICAP' # Link to a variable group containing your secrets
