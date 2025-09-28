@@ -13,10 +13,10 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      terraform init \
-        -backend-config="resource_group_name=ACC-23377-Azure-NPRD-AICAP-RG01" \
-        -backend-config="storage_account_name=acc23377sa01" \
-        -backend-config="container_name=tfstate" \
+      terraform init `
+        -backend-config="resource_group_name=ACC-23377-Azure-NPRD-AICAP-RG01" `
+        -backend-config="storage_account_name=acc23377sa01" `
+        -backend-config="container_name=tfstate" `
         -backend-config="key=terraform.tfstate"
   env:
     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
