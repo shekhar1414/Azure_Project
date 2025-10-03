@@ -1,5 +1,11 @@
+resource "random_string" "suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
 resource "azurerm_mssql_server" "sql" {
-  name                         = lower("${var.prefix}-SQL01")
+  name                         = lower("${var.prefix}-SQL01-${random_string.suffix.result}")
   resource_group_name          = var.resource_group_name
   location                    = var.location
   version                     = "12.0"
@@ -15,7 +21,7 @@ resource "azurerm_mssql_server" "sql" {
 # }
 
 resource "azurerm_cosmosdb_account" "cosmos" {
-  name                = lower("${var.prefix}-cosmos01")
+  name                = lower("${var.prefix}-cosmos01-${random_string.suffix.result}")
   location            = var.location
   resource_group_name = var.resource_group_name
   offer_type          = "Standard"
