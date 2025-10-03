@@ -36,7 +36,6 @@ The provisioned infrastructure consists of the following components:
 - **Azure DevOps Pipeline:** The entire infrastructure is deployed and managed via a YAML pipeline in Azure DevOps.
 - **Self-Hosted Agent:** The pipeline runs on a self-hosted agent, providing flexibility and control over the execution environment.
 - **Remote State:** Terraform's state is stored securely in an Azure Storage Account, which is created as a prerequisite. This allows for team collaboration and reliable state management.
-
 ---
 
 ## Architecture Diagram
@@ -63,6 +62,7 @@ graph TD
             LB[fa:fa-network-wired Load Balancer];
             PIP[fa:fa-globe Public IP];
             BACKUP[fa:fa-shield-alt Backup Vault];
+            MONITOR[fa:fa-chart-line Azure Monitor];
 
             PIP --> LB;
             LB --> VM1;
@@ -79,6 +79,12 @@ graph TD
             
             SQL_PE --> SQL_DB;
             COSMOS_PE --> COSMOS_DB;
+
+            MONITOR --> VM1;
+            MONITOR --> VM2;
+            MONITOR --> VM3;
+            MONITOR --> SQL_DB;
+            MONITOR --> COSMOS_DB;
         end
     end
 
