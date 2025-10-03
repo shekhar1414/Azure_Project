@@ -1,0 +1,70 @@
+trigger:
+- master
+
+pool:
+  name: Default
+
+variables:
+- group: 'ACC-23377-AZURE-NPRD-AICAP'
+
+steps:
+- task: PowerShell@2
+  displayName: 'Terraform Init'
+  inputs:
+    targetType: 'inline'
+    script: |
+      terraform init `
+        -backend-config="resource_group_name=ACC-23377-Azure-NPRD-AICAP-RG01" `
+        -backend-config="storage_account_name=acc23377sa01" `
+        -backend-config="container_name=tfstate" `
+        -backend-config="key=terraform.tfstate"
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+- task: PowerShell@2
+  displayName: 'Terraform Validate'
+  inputs:
+    targetType: 'inline'
+    script: 'terraform validate'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+- task: PowerShell@2
+  displayName: 'Terraform Plan'
+  inputs:
+    targetType: 'inline'
+    script: 'terraform plan -out=tfplan'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    TF_VAR_admin_password: $(admin_password)
+
+- task: PowerShell@2
+  displayName: 'Terraform Apply'
+  inputs:
+    targetType: 'inline'
+    script: 'terraform apply -auto-approve tfplan'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+- task: PowerShell@2
+  displayName: 'Terraform Monitor'
+  inputs:
+    targetType: 'inline'
+    script: 'echo "Monitoring..."'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
