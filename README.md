@@ -15,8 +15,10 @@ The provisioned infrastructure consists of the following components:
 ### 1. Networking
 - **Virtual Network (VNet):** A dedicated VNet (`10.0.0.0/16`) provides an isolated network environment for all resources.
 - **Subnets:**
-    - **Application Subnet:** A subnet (`10.0.2.0/24`) hosts the compute resources and private endpoints.
     - **AzureFirewallSubnet:** A dedicated subnet (`10.0.1.0/24`) for the Azure Firewall.
+    - **VM Subnet:** A subnet (`10.0.3.0/24`) hosts the compute resources.
+    - **DB Subnet:** A subnet (`10.0.4.0/24`) hosts the private endpoints for the databases.
+    - **Monitoring Subnet:** A subnet (`10.0.5.0/24`) that is currently unused.
 - **Public IP & Load Balancer:** A standard Load Balancer with a static public IP address is used to distribute incoming traffic and provide public access to the application. NAT rules are configured for direct SSH access to the VMs on specific ports.
 - **Azure Firewall:** An Azure Firewall is deployed to provide centralized network security, filtering traffic between subnets and to/from the internet.
 - **Private Endpoints:** To enhance security, Private Endpoints are created for both the Azure SQL and Cosmos DB databases. This ensures that the databases are not exposed to the public internet and can only be accessed from within the virtual network.
