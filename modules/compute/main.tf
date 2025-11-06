@@ -39,6 +39,43 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "22_04-lts-arm64"
     version   = "latest"
   }
+
+  custom_data = base64encode(<<-EOT
+#!/bin/bash
+set -x
+
+# Wait for the data disk to be attached
+sleep 30
+
+# Format and mount the data disk
+disk=/dev/sdc
+parted -s $disk mklabel gpt mkpart primary ext4 0% 100%
+mkfs.ext4 /dev/sdc1
+mount /dev/sdc1 /datadrive
+
+# Add to fstab for auto-mounting on boot
+echo "/dev/sdc1 /datadrive ext4 defaults,nofail 0 2" >> /etc/fstab
+  EOT
+  )
+}
+
+resource "azurerm_managed_disk" "datadisk" {
+  count                = 3
+  name                 = "${var.prefix}-datadisk-${count.index + 1}"
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 32
+  tags                 = var.tags
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "datadisk_attachment" {
+  count                = 3
+  managed_disk_id    = azurerm_managed_disk.datadisk[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.vm[count.index].id
+  lun                  = "10"
+  caching              = "ReadWrite"
 }
 
 output "vm_private_ips" {
