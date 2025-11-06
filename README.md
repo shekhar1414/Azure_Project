@@ -25,7 +25,7 @@ The provisioned infrastructure consists of the following components:
 - **Private DNS Zones:** Private DNS zones (`privatelink.database.windows.net` and `privatelink.documents.azure.com`) are configured to resolve the database hostnames to their private IP addresses within the VNet.
 
 ### 2. Compute
-- **Virtual Machines:** The application is hosted on three Linux Virtual Machines (`Standard_B2pts_v2`). These VMs are placed behind the load balancer to ensure high availability.
+- **Virtual Machines:** The application is hosted on three Linux Virtual Machines (`Standard_B2pts_v2`). These VMs are placed behind the load balancer to ensure high availability. Each VM has a 32GB managed data disk attached for additional storage.
 
 ### 3. Databases
 - **Azure SQL Server:** A managed SQL server for relational data.
@@ -67,6 +67,11 @@ graph TD
                     SQL_PE["Private Endpoint (SQL)"];
                     COSMOS_PE["Private Endpoint (Cosmos)"];
                 end
+                subgraph "Data Disks"
+                    DISK1[fa:fa-database Data Disk 1];
+                    DISK2[fa:fa-database Data Disk 2];
+                    DISK3[fa:fa-database Data Disk 3];
+                end
             end
 
             subgraph "Databases"
@@ -85,6 +90,10 @@ graph TD
             FW --> VM1;
             FW --> VM2;
             FW --> VM3;
+
+            VM1 --> DISK1;
+            VM2 --> DISK2;
+            VM3 --> DISK3;
 
             VM1 --> SQL_PE;
             VM2 --> SQL_PE;

@@ -1,0 +1,56 @@
+trigger:
+- none
+
+pool:
+  name: Default
+
+variables:
+- group: 'ACC-23377-AZURE-NPRD-AICAP'
+
+steps:
+- task: PowerShell@2
+  displayName: 'Terraform Init'
+  inputs:
+    targetType: 'inline'
+    script: |
+      c:\Terraform_Deployment\Azure_Project\terraform.exe init `
+        -backend-config="resource_group_name=ACC-23377-Azure-NPRD-AICAP-RG01" `
+        -backend-config="storage_account_name=acc23377sa01" `
+        -backend-config="container_name=tfstate" `
+        -backend-config="key=terraform.tfstate"
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+- task: PowerShell@2
+  displayName: 'Terraform Plan Destroy'
+  inputs:
+    targetType: 'inline'
+    script: 'c:\Terraform_Deployment\Azure_Project\terraform.exe plan -destroy -out=tfplan.destroy'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    TF_VAR_admin_password: $(admin_password)
+
+- task: ManualValidation@0
+  displayName: 'Manual Validation'
+  timeoutInMinutes: 1440 # 24 hours
+  inputs:
+    notifyUsers: ''
+    instructions: 'Please validate the Terraform plan and approve to proceed with the destroy.'
+    onTimeout: 'reject'
+
+- task: PowerShell@2
+  displayName: 'Terraform Destroy'
+  inputs:
+    targetType: 'inline'
+    script: 'c:\Terraform_Deployment\Azure_Project\terraform.exe apply -auto-approve tfplan.destroy'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)

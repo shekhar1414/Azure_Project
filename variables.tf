@@ -5,7 +5,7 @@ variable "prefix" {
 
 variable "location" {
   description = "Azure region"
-  default     = "Central India"
+  default     = "East US"
 }
 
 variable "admin_username" {
