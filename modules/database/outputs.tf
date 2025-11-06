@@ -8,7 +8,4 @@ output "cosmosdb_account_id" {
   value       = azurerm_cosmosdb_account.cosmos.id
 }
 
-output "db_id" {
-  description = "The ID of the SQL database."
-  value       = azurerm_mssql_database.sqldb.id
-}
+

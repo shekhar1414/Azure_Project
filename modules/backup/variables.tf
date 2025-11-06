@@ -1,7 +1,4 @@
-variable "db_id" {
-  description = "The ID of the SQL database to be backed up."
-  type        = string
-}
+
 
 variable "vm_ids" {
   description = "The IDs of the VMs to be backed up."

@@ -70,7 +70,7 @@ module "monitoring" {
   resource_group_name          = azurerm_resource_group.rg.name
   tags                         = local.common_tags
   action_group_name            = "${var.prefix}-ag"
-  action_group_short_name      = "${var.prefix}ag"
+  action_group_short_name      = "aicapag"
   log_analytics_workspace_name = "${var.prefix}-law"
   data_collection_rule_name    = "${var.prefix}-dcr"
 }
@@ -81,7 +81,6 @@ module "backup" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   vm_ids              = module.compute.vm_ids
-  db_id               = module.database.db_id
   tags                = local.common_tags
 }
 

@@ -1,5 +1,10 @@
 
 
+variable "prefix" {
+  description = "The prefix for the resource names"
+  type        = string
+}
+
 variable "location" {
   description = "The Azure region where the resources will be created"
   type        = string

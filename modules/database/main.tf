@@ -23,6 +23,10 @@ resource "azurerm_mssql_database" "sqldb" {
   sku_name       = "S0"
   zone_redundant = false
   tags           = var.tags
+
+  long_term_retention_policy {
+    weekly_retention = "P1W"
+  }
 }
 
 resource "azurerm_mssql_virtual_network_rule" "sql_vnet_rule" {
