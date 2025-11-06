@@ -21,6 +21,11 @@ variable "resource_group_name" {
 }
 
 variable "tags" {
-  description = "A map of tags to assign to the resources."
+  description = "A map of tags to assign to the resources"
   type        = map(string)
+}
+
+variable "vm_count" {
+  description = "The number of virtual machines to create."
+  type        = number
 }

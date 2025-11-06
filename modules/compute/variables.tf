@@ -14,3 +14,8 @@ variable "lb_nat_rule_ids" {
   description = "A list of load balancer NAT rule IDs."
   type        = list(string)
 }
+
+variable "vm_count" {
+  description = "The number of virtual machines to create."
+  type        = number
+}

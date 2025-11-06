@@ -1,5 +1,5 @@
 resource "azurerm_network_interface" "nic" {
-  count               = 3
+  count               = var.vm_count
   name                = "${var.prefix}-NIC0${count.index + 1}"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  count               = 3
+  count               = var.vm_count
   name                = "${var.prefix}-VM0${count.index + 1}"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -60,7 +60,7 @@ echo "/dev/sdc1 /datadrive ext4 defaults,nofail 0 2" >> /etc/fstab
 }
 
 resource "azurerm_managed_disk" "datadisk" {
-  count                = 3
+  count                = var.vm_count
   name                 = "${var.prefix}-datadisk-${count.index + 1}"
   location             = var.location
   resource_group_name  = var.resource_group_name
@@ -71,7 +71,7 @@ resource "azurerm_managed_disk" "datadisk" {
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "datadisk_attachment" {
-  count                = 3
+  count                = var.vm_count
   managed_disk_id    = azurerm_managed_disk.datadisk[count.index].id
   virtual_machine_id = azurerm_linux_virtual_machine.vm[count.index].id
   lun                  = "10"
@@ -89,7 +89,7 @@ output "vm_ids" {
 
 # Associate NICs with Load Balancer Backend Pool
 resource "azurerm_network_interface_nat_rule_association" "nic_nat_rule_assoc" {
-  count                   = 3
+  count                   = var.vm_count
   network_interface_id    = azurerm_network_interface.nic[count.index].id
   ip_configuration_name   = "ipconfig1"
   nat_rule_id             = element(var.lb_nat_rule_ids, count.index)

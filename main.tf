@@ -43,6 +43,7 @@ module "compute" {
   admin_password      = var.admin_password
   tags                = local.common_tags
   lb_nat_rule_ids     = module.networking.lb_nat_rule_ids
+  vm_count            = var.vm_count
 }
 
 module "storage" {
@@ -82,6 +83,7 @@ module "backup" {
   resource_group_name = azurerm_resource_group.rg.name
   vm_ids              = module.compute.vm_ids
   tags                = local.common_tags
+  vm_count            = var.vm_count
 }
 
 # --- Private Endpoint for Azure SQL ---

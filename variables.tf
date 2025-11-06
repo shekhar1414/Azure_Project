@@ -17,6 +17,11 @@ variable "admin_password" {
   sensitive   = true
 }
 
+variable "vm_count" {
+  description = "The number of virtual machines to create."
+  default     = 3
+}
+
 
 
 
