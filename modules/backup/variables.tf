@@ -1,9 +1,29 @@
-variable "prefix" {}
-variable "location" {}
-variable "resource_group_name" {}
-variable "vm_ids" {}
+variable "db_id" {
+  description = "The ID of the SQL database to be backed up."
+  type        = string
+}
+
+variable "vm_ids" {
+  description = "The IDs of the VMs to be backed up."
+  type        = list(string)
+}
+
+variable "prefix" {
+  description = "The prefix for the resource names."
+  type        = string
+}
+
+variable "location" {
+  description = "The Azure region where the resources will be created."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "The name of the resource group."
+  type        = string
+}
+
 variable "tags" {
-  description = "Tags to apply to all resources."
+  description = "A map of tags to assign to the resources."
   type        = map(string)
-  default     = {}
 }

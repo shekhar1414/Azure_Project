@@ -29,3 +29,20 @@ resource "azurerm_backup_protected_vm" "protect" {
   source_vm_id         = element(var.vm_ids, count.index)
   backup_policy_id     = azurerm_backup_policy_vm.vmpolicy.id
 }
+
+resource "azurerm_backup_policy_sql" "sql_policy" {
+  name                = "${var.prefix}-SQLPOLICY01"
+  resource_group_name = var.resource_group_name
+  recovery_vault_name = azurerm_recovery_services_vault.backupvault.name
+
+  retention_daily {
+    count = 7
+  }
+}
+
+resource "azurerm_backup_protected_sql_database" "sql_backup" {
+  resource_group_name = var.resource_group_name
+  recovery_vault_name = azurerm_recovery_services_vault.backupvault.name
+  source_database_id  = var.db_id
+  backup_policy_id    = azurerm_backup_policy_sql.sql_policy.id
+}

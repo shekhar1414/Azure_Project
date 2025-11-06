@@ -81,6 +81,7 @@ module "backup" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   vm_ids              = module.compute.vm_ids
+  db_id               = module.database.db_id
   tags                = local.common_tags
 }
 

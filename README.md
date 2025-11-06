@@ -36,7 +36,9 @@ The provisioned infrastructure consists of the following components:
 - **Azure Firewall:** Provides advanced threat protection and traffic filtering at the network level.
 
 ### 5. Backup
-- **Azure Backup Vault:** A Recovery Services Vault with **RSA (Recovery Services Vault) SKU** is provisioned to manage backups for the virtual machines, protecting against data loss.
+- **Azure Backup Vault:** A Recovery Services Vault is provisioned to manage backups for the virtual machines and the Azure SQL database, protecting against data loss.
+- **Azure SQL Database Backup:** The SQL database is configured with a backup policy to store backups in the Recovery Services Vault.
+- **Azure Cosmos DB Backup:** The Cosmos DB account is configured with periodic backups with a 24-hour retention period.
 
 ### 6. Monitoring
 - **Log Analytics Workspace:** A centralized Log Analytics Workspace is deployed to collect logs and metrics from various Azure resources, enabling comprehensive monitoring and analysis.
@@ -101,6 +103,12 @@ graph TD
             DCR --> VM3;
             DCR --> SQL_DB;
             DCR --> COSMOS_DB;
+
+            BACKUP --> VM1;
+            BACKUP --> VM2;
+            BACKUP --> VM3;
+            BACKUP --> SQL_DB;
+            BACKUP --> COSMOS_DB;
         end
     end
 
