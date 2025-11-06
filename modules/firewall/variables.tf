@@ -25,3 +25,8 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "vnet_id" {
+  description = "The ID of the virtual network where the firewall will be deployed"
+  type        = string
+}
+
