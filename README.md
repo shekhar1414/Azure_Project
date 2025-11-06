@@ -72,7 +72,7 @@ graph TD
 
             LB[fa:fa-network-wired Load Balancer];
             PIP[fa:fa-globe Public IP];
-            BACKUP[fa:fa-shield-alt Backup Vault (RSA)];
+            BACKUP[fa:fa-shield-alt Backup Vault];
             LAW[fa:fa-chart-line Log Analytics Workspace];
             DCR[fa:fa-file-alt Data Collection Rule];
 
