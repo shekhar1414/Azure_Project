@@ -14,11 +14,11 @@ resource "azurerm_mssql_server" "sql" {
   tags                         = var.tags
 }
 
-# resource "azurerm_mssql_virtual_network_rule" "sql_vnet_rule" {
-#   name      = "${var.prefix}-sql-vnet-rule"
-#   server_id = azurerm_mssql_server.sql.id
-#   subnet_id = var.subnet_id
-# }
+resource "azurerm_mssql_virtual_network_rule" "sql_vnet_rule" {
+  name      = "${var.prefix}-sql-vnet-rule"
+  server_id = azurerm_mssql_server.sql.id
+  subnet_id = var.subnet_id
+}
 
 resource "azurerm_cosmosdb_account" "cosmos" {
   name                = lower("${var.prefix}-cosmos01-${random_string.suffix.result}")

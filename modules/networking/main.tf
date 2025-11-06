@@ -21,6 +21,27 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
+resource "azurerm_subnet" "vm_subnet" {
+  name                 = "${var.prefix}-VM-SUBNET"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.3.0/24"]
+}
+
+resource "azurerm_subnet" "db_subnet" {
+  name                 = "${var.prefix}-DB-SUBNET"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.4.0/24"]
+}
+
+resource "azurerm_subnet" "monitoring_subnet" {
+  name                 = "${var.prefix}-MONITORING-SUBNET"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.5.0/24"]
+}
+
 resource "azurerm_public_ip" "pip" {
   name                = "${var.prefix}-PIP01"
   location            = var.location

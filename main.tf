@@ -37,7 +37,7 @@ module "compute" {
   prefix              = var.prefix
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  subnet_id           = module.networking.subnet_id
+  subnet_id           = module.networking.vm_subnet_id
   lb_backend_id       = module.networking.lb_backend_id
   admin_username      = var.admin_username
   admin_password      = var.admin_password
@@ -59,7 +59,7 @@ module "database" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
-  subnet_id           = module.networking.subnet_id
+  subnet_id           = module.networking.db_subnet_id
 }
 
 
@@ -102,7 +102,7 @@ resource "azurerm_private_endpoint" "sql" {
   name                = "${var.prefix}-sql-pe"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  subnet_id           = module.networking.subnet_id
+  subnet_id           = module.networking.db_subnet_id
   tags                = local.common_tags
 
   private_service_connection {
@@ -136,7 +136,7 @@ resource "azurerm_private_endpoint" "cosmos" {
   name                = "${var.prefix}-cosmos-pe"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  subnet_id           = module.networking.subnet_id
+  subnet_id           = module.networking.db_subnet_id
   tags                = local.common_tags
 
   private_service_connection {
