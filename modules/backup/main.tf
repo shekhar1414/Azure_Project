@@ -2,7 +2,7 @@ resource "azurerm_recovery_services_vault" "backupvault" {
   name                = "${var.prefix}-BKV01"
   location            = var.location
   resource_group_name = var.resource_group_name
-  sku                 = "Standard"
+  sku                 = "RS0"
   tags                = var.tags
 }
 

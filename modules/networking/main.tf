@@ -6,11 +6,19 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
+
+resource "azurerm_subnet" "firewall" {
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-SUBNET01"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = ["10.0.2.0/24"]
 }
 
 resource "azurerm_public_ip" "pip" {
@@ -77,6 +85,12 @@ resource "azurerm_lb_probe" "https8443_probe" {
   loadbalancer_id     = azurerm_lb.lb.id
   protocol            = "Tcp"
   port                = 8443
+}
+
+
+output "firewall_subnet_id" {
+  description = "The ID of the firewall subnet."
+  value       = azurerm_subnet.firewall.id
 }
 
 output "subnet_id" {

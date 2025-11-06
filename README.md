@@ -14,8 +14,11 @@ The provisioned infrastructure consists of the following components:
 
 ### 1. Networking
 - **Virtual Network (VNet):** A dedicated VNet (`10.0.0.0/16`) provides an isolated network environment for all resources.
-- **Subnet:** A single subnet (`10.0.1.0/24`) hosts the compute resources and private endpoints. Because all VMs and private endpoints reside in the same subnet, all VMs can communicate with all databases securely.
+- **Subnets:**
+    - **Application Subnet:** A subnet (`10.0.2.0/24`) hosts the compute resources and private endpoints.
+    - **AzureFirewallSubnet:** A dedicated subnet (`10.0.1.0/24`) for the Azure Firewall.
 - **Public IP & Load Balancer:** A standard Load Balancer with a static public IP address is used to distribute incoming traffic and provide public access to the application. NAT rules are configured for direct SSH access to the VMs on specific ports.
+- **Azure Firewall:** An Azure Firewall is deployed to provide centralized network security, filtering traffic between subnets and to/from the internet.
 - **Private Endpoints:** To enhance security, Private Endpoints are created for both the Azure SQL and Cosmos DB databases. This ensures that the databases are not exposed to the public internet and can only be accessed from within the virtual network.
 - **Private DNS Zones:** Private DNS zones (`privatelink.database.windows.net` and `privatelink.documents.azure.com`) are configured to resolve the database hostnames to their private IP addresses within the VNet.
 
@@ -27,12 +30,17 @@ The provisioned infrastructure consists of the following components:
 - **Azure Cosmos DB:** A globally distributed, multi-model database for NoSQL data.
 
 ### 4. Security
-- **Network Security Group (NSG):** An NSG is associated with the subnet to control inbound and outbound traffic, acting as a firewall.
+- **Network Security Group (NSG):** An NSG is associated with the application subnet to control inbound and outbound traffic, acting as a firewall.
+- **Azure Firewall:** Provides advanced threat protection and traffic filtering at the network level.
 
 ### 5. Backup
-- **Azure Backup Vault:** A Recovery Services Vault is provisioned to manage backups for the virtual machines, protecting against data loss.
+- **Azure Backup Vault:** A Recovery Services Vault with **RSA (Recovery Services Vault) SKU** is provisioned to manage backups for the virtual machines, protecting against data loss.
 
-### 6. CI/CD & State Management
+### 6. Monitoring
+- **Log Analytics Workspace:** A centralized Log Analytics Workspace is deployed to collect logs and metrics from various Azure resources, enabling comprehensive monitoring and analysis.
+- **Data Collection Rule (DCR):** A Data Collection Rule is configured to define what data to collect and where to send it within the Log Analytics Workspace.
+
+### 7. CI/CD & State Management
 - **Azure DevOps Pipeline:** The entire infrastructure is deployed and managed via a YAML pipeline in Azure DevOps.
 - **Self-Hosted Agent:** The pipeline runs on a self-hosted agent, providing flexibility and control over the execution environment.
 - **Remote State:** Terraform's state is stored securely in an Azure Storage Account, which is created as a prerequisite. This allows for team collaboration and reliable state management.
@@ -45,7 +53,10 @@ graph TD
     subgraph "Azure Cloud"
         subgraph "Resource Group (ACC-23377-Azure-NPRD-AICAP-RG01)"
             subgraph "Virtual Network (10.0.0.0/16)"
-                subgraph "Subnet (10.0.1.0/24)"
+                subgraph "AzureFirewallSubnet (10.0.1.0/24)"
+                    FW[fa:fa-firewall Azure Firewall];
+                end
+                subgraph "Application Subnet (10.0.2.0/24)"
                     VM1["VM 1"];
                     VM2["VM 2"];
                     VM3["VM 3"];
@@ -61,13 +72,15 @@ graph TD
 
             LB[fa:fa-network-wired Load Balancer];
             PIP[fa:fa-globe Public IP];
-            BACKUP[fa:fa-shield-alt Backup Vault];
-            MONITOR[fa:fa-chart-line Azure Monitor];
+            BACKUP[fa:fa-shield-alt Backup Vault (RSA)];
+            LAW[fa:fa-chart-line Log Analytics Workspace];
+            DCR[fa:fa-file-alt Data Collection Rule];
 
             PIP --> LB;
-            LB --> VM1;
-            LB --> VM2;
-            LB --> VM3;
+            LB --> FW;
+            FW --> VM1;
+            FW --> VM2;
+            FW --> VM3;
 
             VM1 --> SQL_PE;
             VM2 --> SQL_PE;
@@ -80,11 +93,12 @@ graph TD
             SQL_PE --> SQL_DB;
             COSMOS_PE --> COSMOS_DB;
 
-            MONITOR --> VM1;
-            MONITOR --> VM2;
-            MONITOR --> VM3;
-            MONITOR --> SQL_DB;
-            MONITOR --> COSMOS_DB;
+            LAW --> DCR;
+            DCR --> VM1;
+            DCR --> VM2;
+            DCR --> VM3;
+            DCR --> SQL_DB;
+            DCR --> COSMOS_DB;
         end
     end
 

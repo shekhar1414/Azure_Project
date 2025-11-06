@@ -4,6 +4,17 @@ resource "azurerm_resource_group" "rg" {
   tags     = local.common_tags
 }
 
+
+module "firewall" {
+  source              = "./modules/firewall"
+  prefix              = var.prefix
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = local.common_tags
+  subnet_id           = module.networking.firewall_subnet_id
+  vnet_id             = module.networking.vnet_id
+}
+
 module "networking" {
   source              = "./modules/networking"
   prefix              = var.prefix
@@ -49,6 +60,19 @@ module "database" {
   resource_group_name = azurerm_resource_group.rg.name
   tags                = local.common_tags
   subnet_id           = module.networking.subnet_id
+}
+
+
+module "monitoring" {
+  source                       = "./modules/monitoring"
+  prefix                       = var.prefix
+  location                     = azurerm_resource_group.rg.location
+  resource_group_name          = azurerm_resource_group.rg.name
+  tags                         = local.common_tags
+  action_group_name            = "${var.prefix}-ag"
+  action_group_short_name      = "${var.prefix}ag"
+  log_analytics_workspace_name = "${var.prefix}-law"
+  data_collection_rule_name    = "${var.prefix}-dcr"
 }
 
 module "backup" {
