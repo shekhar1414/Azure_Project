@@ -7,6 +7,7 @@ resource "azurerm_resource_group" "rg" {
 
 module "firewall" {
   source              = "./modules/firewall"
+  depends_on          = [module.networking]
   prefix              = var.prefix
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -34,6 +35,7 @@ module "security" {
 
 module "compute" {
   source              = "./modules/compute"
+  depends_on          = [module.networking]
   prefix              = var.prefix
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -78,6 +80,7 @@ module "monitoring" {
 
 module "backup" {
   source              = "./modules/backup"
+  depends_on          = [module.compute]
   prefix              = var.prefix
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -94,6 +97,7 @@ resource "azurerm_private_dns_zone" "sql" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "sql" {
+  depends_on            = [module.networking]
   name                  = "${var.prefix}-sql-dns-link"
   resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.sql.name
@@ -101,6 +105,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "sql" {
 }
 
 resource "azurerm_private_endpoint" "sql" {
+  depends_on          = [module.database, module.networking]
   name                = "${var.prefix}-sql-pe"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -128,6 +133,7 @@ resource "azurerm_private_dns_zone" "cosmos" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "cosmos" {
+  depends_on            = [module.networking]
   name                  = "${var.prefix}-cosmos-dns-link"
   resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.cosmos.name
@@ -135,6 +141,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "cosmos" {
 }
 
 resource "azurerm_private_endpoint" "cosmos" {
+  depends_on          = [module.database, module.networking]
   name                = "${var.prefix}-cosmos-pe"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
